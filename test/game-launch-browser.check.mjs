@@ -2,8 +2,11 @@ import {createServer} from 'node:http';
 import {readFile} from 'node:fs/promises';
 import {extname} from 'node:path';
 import assert from 'node:assert/strict';
-import {chromium} from '../../orbitcraft/node_modules/@playwright/test/index.mjs';
-import {renderOrbitSearch} from '../../chat/orbit-search.js';
+import {chromium} from '@playwright/test';
+import {resolve} from 'node:path';
+import {pathToFileURL} from 'node:url';
+if(!process.env.ORBIT_MAIN_REPO){console.log('SKIP main-site integration: set ORBIT_MAIN_REPO to the main repository checkout.');process.exit(0);}
+const {renderOrbitSearch}=await import(pathToFileURL(resolve(process.env.ORBIT_MAIN_REPO,'chat/orbit-search.js')).href);
 const listen=server=>new Promise(resolve=>server.listen(0,'127.0.0.1',()=>resolve('http://127.0.0.1:'+server.address().port)));
 let searchBase,parentBase;
 const parent=createServer((req,res)=>{

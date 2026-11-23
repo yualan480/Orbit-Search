@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import {chromium} from '../../orbitcraft/node_modules/@playwright/test/index.mjs';
+import {chromium} from '@playwright/test';
 import {server as wisp} from '@mercuryworkshop/wisp-js/server';
 import {createSearchServer} from '../server.js';
 const listen=s=>new Promise(r=>s.listen(0,'127.0.0.1',()=>r('http://127.0.0.1:'+s.address().port)));

@@ -1,12 +1,15 @@
 import {readFile} from 'node:fs/promises';
 import http from 'node:http';
 import assert from 'node:assert/strict';
-import {WebSocketServer} from '../../orbitcraft/node_modules/ws/wrapper.mjs';
-import {chromium} from '../../orbitcraft/node_modules/@playwright/test/index.mjs';
+import {WebSocketServer} from 'ws';
+import {chromium} from '@playwright/test';
 import {server as wisp} from '@mercuryworkshop/wisp-js/server';
 import {createSearchServer} from '../server.js';
-import {renderOrbitSearch} from '../../chat/orbit-search.js';
-const orbitHtml=await readFile(new URL('../../chat/index.html',import.meta.url),'utf8');
+import {resolve} from 'node:path';
+import {pathToFileURL} from 'node:url';
+if(!process.env.ORBIT_MAIN_REPO){console.log('SKIP main-site integration: set ORBIT_MAIN_REPO to the main repository checkout.');process.exit(0);}
+const {renderOrbitSearch}=await import(pathToFileURL(resolve(process.env.ORBIT_MAIN_REPO,'chat/orbit-search.js')).href);
+const orbitHtml=await readFile(resolve(process.env.ORBIT_MAIN_REPO,'chat/index.html'),'utf8');
 const orbitCsp=orbitHtml.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)"/)[1];
 const frameRule=orbitCsp.split(';').find(rule=>rule.trim().startsWith('frame-src '));
 assert.ok(frameRule.split(/\s+/).includes('https://silk-road-orbit-search.onrender.com'),'The actual Orbit CSP must explicitly allow the search origin');
